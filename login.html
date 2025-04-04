@@ -3,56 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RailEase - Login</title>
-    <link rel="stylesheet" href="style.css">
+    <title>RoadEase Nigeria - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-light: #e8f0fe;
+            --secondary: #ff6b6b;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --light-gray: #ecf0f1;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --radius: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .login-card {
+            background-color: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .input-with-icon input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-with-icon input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0d62c9;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .register-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 20px;
+            }
+
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
-                <div class="logo">
-                    <i class="fas fa-train"></i>
-                    <h1>RailEase</h1>
-                </div>
-                <h2>Login to your account</h2>
+    <div class="container">
+        <div class="login-card">
+            <div class="logo">
+                <i class="fas fa-road"></i>
+                <h1>RoadEase Nigeria</h1>
             </div>
-            
-            <form id="login-form">
+            <h2 class="form-title">Login</h2>
+            <form>
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="email">Email or Phone</label>
                     <div class="input-with-icon">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" id="email" placeholder="Enter your email" required>
+                        <input type="text" id="email" placeholder="Enter email or phone" required>
                     </div>
                 </div>
-                
                 <div class="form-group">
                     <label for="password">Password</label>
                     <div class="input-with-icon">
                         <i class="fas fa-lock"></i>
-                        <input type="password" id="password" placeholder="Enter your password" required>
+                        <input type="password" id="password" placeholder="Enter password" required>
                     </div>
                 </div>
-                
-                <div class="form-options">
-                    <div class="remember-me">
-                        <input type="checkbox" id="remember">
-                        <label for="remember">Remember me</label>
-                    </div>
-                    <a href="#" class="forgot-password">Forgot password?</a>
-                </div>
-                
-                <button type="submit" class="btn btn-primary btn-block">Login</button>
-                
-                <div class="auth-footer">
-                    <p>Don't have an account? <a href="register.html">Sign up</a></p>
-                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
             </form>
+            <div class="forgot-password">
+                <a href="#">Forgot Password?</a>
+            </div>
+            <div class="register-link">
+                Don't have an account? <a href="register.html">Register here</a>
+            </div>
         </div>
     </div>
-
-    <script src="auth.js"></script>
-    <script src="server.js"></script>
 </body>
 </html>

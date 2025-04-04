@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoadEase Nigeria - Help & Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-road"></i>
+                <h1>RoadEase Nigeria</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="book-tickets.html">Book Tickets</a></li>
+                    <li><a href="my-bookings.html">My Bookings</a></li>
+                    <li><a href="live-status.html">Live Status</a></li>
+                    <li><a href="route-enquiry.html">Route Enquiry</a></li>
+                </ul>
+            </nav>
+            <div class="user-profile">
+                <div class="user-avatar">JD</div>
+                <div class="user-info">
+                    <span class="user-name">John Doe</span>
+                    <span class="user-role">Premium Member</span>
+                </div>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="book-tickets.html"><i class="fas fa-ticket-alt"></i> Book Tickets</a></li>
+                <li><a href="my-bookings.html"><i class="fas fa-list-alt"></i> My Bookings</a></li>
+                <li><a href="live-status.html"><i class="fas fa-clock"></i> Live Status</a></li>
+                <li><a href="route-enquiry.html"><i class="fas fa-search"></i> Route Enquiry</a></li>
+                <li><a href="bus-schedule.html"><i class="fas fa-route"></i> Bus Schedule</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="#" class="active"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="page-title">Help & Support</h1>
+            <div class="chart-card">
+                <div class="card-header">
+                    <h3 class="card-title">Frequently Asked Questions</h3>
+                </div>
+                <div class="train-list">
+                    <div class="train-item">
+                        <div class="train-icon"><i class="fas fa-question"></i></div>
+                        <div class="train-details">
+                            <h4>How do I book a ticket?</h4>
+                            <p>Go to 'Book Tickets', select your route and date, then follow the payment steps.</p>
+                        </div>
+                    </div>
+                    <div class="train-item">
+                        <div class="train-icon"><i class="fas fa-question"></i></div>
+                        <div class="train-details">
+                            <h4>Can I cancel my booking?</h4>
+                            <p>Yes, cancellations are allowed up to 24 hours before departure with a small fee.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="booking-form-quick" style="margin-top: 25px;">
+                <h3 class="form-title">Contact Support</h3>
+                <form>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-comment"></i>
+                                <input type="text" id="subject" placeholder="Enter subject" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <textarea id="message" rows="4" placeholder="Describe your issue" required style="width: 100%; padding: 10px; border: 1px solid var(--light-gray); border-radius: 4px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </form>
+                <p style="margin-top: 15px; color: var(--gray);">Call us at: +234 800 123 4567 | Email: support@roadease.ng</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(e.target) && 
+                !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

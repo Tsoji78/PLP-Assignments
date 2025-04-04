@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoadEase Nigeria - Bus Schedule</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-road"></i>
+                <h1>RoadEase Nigeria</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="book-tickets.html">Book Tickets</a></li>
+                    <li><a href="my-bookings.html">My Bookings</a></li>
+                    <li><a href="live-status.html">Live Status</a></li>
+                    <li><a href="route-enquiry.html">Route Enquiry</a></li>
+                </ul>
+            </nav>
+            <div class="user-profile">
+                <div class="user-avatar">JD</div>
+                <div class="user-info">
+                    <span class="user-name">John Doe</span>
+                    <span class="user-role">Premium Member</span>
+                </div>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="book-tickets.html"><i class="fas fa-ticket-alt"></i> Book Tickets</a></li>
+                <li><a href="my-bookings.html"><i class="fas fa-list-alt"></i> My Bookings</a></li>
+                <li><a href="live-status.html"><i class="fas fa-clock"></i> Live Status</a></li>
+                <li><a href="route-enquiry.html"><i class="fas fa-search"></i> Route Enquiry</a></li>
+                <li><a href="#" class="active"><i class="fas fa-route"></i> Bus Schedule</a></li>
+                <li><a href="travel-history.html"><i class="fas fa-history"></i> Travel History</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="help-support.html"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="page-title">Bus Schedule</h1>
+            <div class="booking-form-quick">
+                <h3 class="form-title">Search Schedule</h3>
+                <form>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="from-station">From</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <select id="from-station" required>
+                                    <option value="">Select Origin</option>
+                                    <option value="lagos">Lagos</option>
+                                    <option value="abuja">Abuja</option>
+                                    <option value="kano">Kano</option>
+                                    <option value="ibadan">Ibadan</option>
+                                    <option value="ph">Port Harcourt</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="to-station">To</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <select id="to-station" required>
+                                    <option value="">Select Destination</option>
+                                    <option value="lagos">Lagos</option>
+                                    <option value="abuja">Abuja</option>
+                                    <option value="kano">Kano</option>
+                                    <option value="ibadan">Ibadan</option>
+                                    <option value="ph">Port Harcourt</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <div class="input-with-icon">
+                                <i class="far fa-calendar-alt"></i>
+                                <input type="date" id="date" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">View Schedule</button>
+                </form>
+            </div>
+            <div class="chart-card" style="margin-top: 25px;">
+                <div class="card-header">
+                    <h3 class="card-title">Bus Schedule: Lagos → Abuja</h3>
+                </div>
+                <div class="train-list">
+                    <div class="train-item">
+                        <div class="train-icon"><i class="fas fa-bus"></i></div>
+                        <div class="train-details">
+                            <h4>ABC Transport</h4>
+                            <p>Dep: 08:00 AM | Arr: 08:00 PM | Daily</p>
+                        </div>
+                        <div class="train-status">₦15,000</div>
+                    </div>
+                    <div class="train-item">
+                        <div class="train-icon"><i class="fas fa-bus"></i></div>
+                        <div class="train-details">
+                            <h4>Peace Mass</h4>
+                            <p>Dep: 09:30 AM | Arr: 09:00 PM | Daily</p>
+                        </div>
+                        <div class="train-status">₦14,500</div>
+                    </div>
+                    <div class="train-item">
+                        <div class="train-icon"><i class="fas fa-bus"></i></div>
+                        <div class="train-details">
+                            <h4>GIGM</h4>
+                            <p>Dep: 07:00 AM | Arr: 07:00 PM | Mon-Sat</p>
+                        </div>
+                        <div class="train-status">₦16,000</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(e.target) && 
+                !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

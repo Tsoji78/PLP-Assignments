@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoadEase Nigeria - My Bookings</title>
+    <title>RoadEase Nigeria - Travel History</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -18,7 +18,7 @@
                 <ul>
                     <li><a href="index.html">Dashboard</a></li>
                     <li><a href="book-tickets.html">Book Tickets</a></li>
-                    <li><a href="#" class="active">My Bookings</a></li>
+                    <li><a href="my-bookings.html">My Bookings</a></li>
                     <li><a href="live-status.html">Live Status</a></li>
                     <li><a href="route-enquiry.html">Route Enquiry</a></li>
                 </ul>
@@ -41,51 +41,51 @@
             <ul class="sidebar-menu">
                 <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="book-tickets.html"><i class="fas fa-ticket-alt"></i> Book Tickets</a></li>
-                <li><a href="#" class="active"><i class="fas fa-list-alt"></i> My Bookings</a></li>
+                <li><a href="my-bookings.html"><i class="fas fa-list-alt"></i> My Bookings</a></li>
                 <li><a href="live-status.html"><i class="fas fa-clock"></i> Live Status</a></li>
                 <li><a href="route-enquiry.html"><i class="fas fa-search"></i> Route Enquiry</a></li>
                 <li><a href="bus-schedule.html"><i class="fas fa-route"></i> Bus Schedule</a></li>
-                <li><a href="travel-history.html"><i class="fas fa-history"></i> Travel History</a></li>
+                <li><a href="#" class="active"><i class="fas fa-history"></i> Travel History</a></li>
                 <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
                 <li><a href="help-support.html"><i class="fas fa-question-circle"></i> Help & Support</a></li>
             </ul>
         </aside>
 
         <main class="main-content">
-            <h1 class="page-title">My Bookings</h1>
+            <h1 class="page-title">Travel History</h1>
             <div class="chart-card">
                 <div class="card-header">
-                    <h3 class="card-title">Upcoming Trips</h3>
+                    <h3 class="card-title">Past Journeys</h3>
+                    <div class="card-actions">
+                        <select id="filter-period">
+                            <option value="all">All Time</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="train-list">
                     <div class="train-item">
                         <div class="train-icon"><i class="fas fa-bus"></i></div>
                         <div class="train-details">
-                            <h4>Lagos → Abuja (Booking #12345)</h4>
-                            <p>April 10, 2025 | 08:00 AM | VIP Class</p>
+                            <h4>Lagos → Abuja (Booking #12344)</h4>
+                            <p>March 25, 2025 | 07:00 AM - 07:00 PM | Economy</p>
                         </div>
-                        <div class="train-status on-time">Confirmed</div>
+                        <div class="train-status on-time">Completed</div>
                     </div>
                     <div class="train-item">
                         <div class="train-icon"><i class="fas fa-bus"></i></div>
                         <div class="train-details">
-                            <h4>Abuja → Kano (Booking #12346)</h4>
-                            <p>April 15, 2025 | 10:30 AM | Business Class</p>
+                            <h4>Abuja → Kano (Booking #12343)</h4>
+                            <p>February 15, 2025 | 09:00 AM - 05:00 PM | Business</p>
                         </div>
-                        <div class="train-status delayed">Pending</div>
+                        <div class="train-status on-time">Completed</div>
                     </div>
-                </div>
-            </div>
-            <div class="chart-card" style="margin-top: 25px;">
-                <div class="card-header">
-                    <h3 class="card-title">Past Trips</h3>
-                </div>
-                <div class="train-list">
                     <div class="train-item">
                         <div class="train-icon"><i class="fas fa-bus"></i></div>
                         <div class="train-details">
-                            <h4>Lagos → Ibadan (Booking #12344)</h4>
-                            <p>March 25, 2025 | 07:00 AM | Economy Class</p>
+                            <h4>Lagos → Ibadan (Booking #12342)</h4>
+                            <p>January 10, 2025 | 08:00 AM - 10:00 AM | VIP</p>
                         </div>
                         <div class="train-status on-time">Completed</div>
                     </div>
@@ -94,6 +94,21 @@
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(e.target) && 
+                !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
