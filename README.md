@@ -4,16 +4,23 @@
 *A modern train booking system with comprehensive features*
 
 ## Table of Contents
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Database Setup](#database-setup)
-- [Running the Application](#running-the-application)
-- [API Endpoints](#api-endpoints)
-- [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
+- [RailEase - Train Booking System](#railease---train-booking-system)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+    - [User Features](#user-features)
+    - [Admin Features](#admin-features)
+  - [Technologies Used](#technologies-used)
+    - [Frontend](#frontend)
+    - [Backend](#backend)
+    - [Development Tools](#development-tools)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Database Setup](#database-setup)
+  - [Running the Application](#running-the-application)
+  - [API Endpoints](#api-endpoints)
+  - [Screenshots](#screenshots)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Features
 

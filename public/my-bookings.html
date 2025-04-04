@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoadEase Nigeria - My Bookings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-road"></i>
+                <h1>RoadEase Nigeria</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="book-tickets.html">Book Tickets</a></li>
+                    <li><a href="#" class="active">My Bookings</a></li>
+                    <li><a href="live-status.html">Live Status</a></li>
+                    <li><a href="route-enquiry.html">Route Enquiry</a></li>
+                </ul>
+            </nav>
+            <div class="user-profile">
+                <div class="user-avatar">JD</div>
+                <div class="user-info">
+                    <span class="user-name">John Doe</span>
+                    <span class="user-role">Premium Member</span>
+                </div>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="book-tickets.html"><i class="fas fa-ticket-alt"></i> Book Tickets</a></li>
+                <li><a href="#" class="active"><i class="fas fa-list-alt"></i> My Bookings</a></li>
+                <li><a href="live-status.html"><i class="fas fa-clock"></i> Live Status</a></li>
+                <li><a href="route-enquiry.html"><i class="fas fa-search"></i> Route Enquiry</a></li>
+                <li><a href="bus-schedule.html"><i class="fas fa-route"></i> Bus Schedule</a></li>
+                <li><a href="travel-history.html"><i class="fas fa-history"></i> Travel History</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="help-support.html"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="page-title">My Bookings</h1>
+            <div class="chart-card">
+                <div class="card-header">
+                    <h3 class="card-title">Upcoming Trips</h3>
+                </div>
+                <div class="train-list my-bookings">
+                    <div class="train-item">
+                        <div class="train-icon"><i class="fas fa-bus"></i></div>
+                        <div class="train-details">
+                            <h4>Lagos → Abuja (Booking #12345)</h4>
+                            <p>April 10, 2025 | 08:00 AM | VIP Class</p>
+                        </div>
+                        <div class="train-status on-time">Confirmed</div>
+                    </div>
+                    <div class="train-item">
+                        <div class="train-icon"><i class="fas fa-bus"></i></div>
+                        <div class="train-details">
+                            <h4>Abuja → Kano (Booking #12346)</h4>
+                            <p>April 15, 2025 | 10:30 AM | Business Class</p>
+                        </div>
+                        <div class="train-status delayed">Pending</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-card" style="margin-top: 25px;">
+                <div class="card-header">
+                    <h3 class="card-title">Past Trips</h3>
+                </div>
+                <div class="train-list">
+                    <div class="train-item">
+                        <div class="train-icon"><i class="fas fa-bus"></i></div>
+                        <div class="train-details">
+                            <h4>Lagos → Ibadan (Booking #12344)</h4>
+                            <p>March 25, 2025 | 07:00 AM | Economy Class</p>
+                        </div>
+                        <div class="train-status on-time">Completed</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
