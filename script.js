@@ -1,481 +1,371 @@
-// API Base URL
-const API_BASE_URL = 'http://localhost:3001/api';
-
-// Helper function for API calls
-async function fetchAPI(endpoint, method = 'GET', body = null, token = null) {
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-  
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  
-  const config = {
-    method,
-    headers,
-  };
-  
-  if (body) {
-    config.body = JSON.stringify(body);
-  }
-  
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Something went wrong');
-  }
-  
-  return response.json();
-}
-
 // Check authentication at the start
 document.addEventListener('DOMContentLoaded', function() {
-  const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user'));
+  // Check if user is logged in
+  const user = JSON.parse(localStorage.getItem('currentUser') || 
+                        JSON.parse(sessionStorage.getItem('currentUser')));
   
-  if (!token && !window.location.pathname.includes('login.html')) {
-    window.location.href = 'login.html';
-    return;
+  if (!user && !window.location.pathname.includes('login.html')) {
+      window.location.href = 'login.html';
+      return;
   }
   
   // If user is logged in, show their name in header
   if (user) {
-    const nav = document.querySelector('nav ul');
-    if (nav) {
-      const userItem = document.createElement('li');
-      userItem.innerHTML = `<a href="#"><i class="fas fa-user"></i> ${user.name}</a>`;
-      nav.appendChild(userItem);
-      
-      // Replace login/signup with logout
-      const userActions = document.querySelector('.user-actions');
-      if (userActions) {
-        userActions.innerHTML = `
-          <a href="#" class="btn btn-outline" id="logout-btn">Logout</a>
-        `;
-        
-        document.getElementById('logout-btn').addEventListener('click', function(e) {
-          e.preventDefault();
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          window.location.href = 'login.html';
-        });
+      const nav = document.querySelector('nav ul');
+      if (nav) {
+          const userItem = document.createElement('li');
+          userItem.innerHTML = `<a href="#"><i class="fas fa-user"></i> ${user.name}</a>`;
+          nav.appendChild(userItem);
+          
+          // Replace login/signup with logout
+          const userActions = document.querySelector('.user-actions');
+          if (userActions) {
+              userActions.innerHTML = `
+                  <a href="#" class="btn btn-outline" id="logout-btn">Logout</a>
+              `;
+              
+              document.getElementById('logout-btn').addEventListener('click', function(e) {
+                  e.preventDefault();
+                  localStorage.removeItem('currentUser');
+                  sessionStorage.removeItem('currentUser');
+                  window.location.href = 'login.html';
+              });
+          }
       }
-    }
   }
   
-  // Set minimum date for departure date picker to today
-  const today = new Date().toISOString().split('T')[0];
-  const departureDateInput = document.getElementById('departure-date');
-  if (departureDateInput) {
-    departureDateInput.min = today;
-  }
-  
-  // Initialize page-specific functionality
-  if (document.getElementById('booking-form')) {
-    initBookingPage(token);
-  } else if (document.getElementById('bookings-list')) {
-    initMyBookingsPage(token);
-  } else if (document.getElementById('status-form')) {
-    initLiveStatusPage();
-  }
+  // Rest of your existing script.js code...
+  // [Keep all the existing code from the original script.js]
 });
 
-// Initialize Booking Page
-async function initBookingPage(token) {
+document.addEventListener('DOMContentLoaded', function() {
+  // DOM Elements
   const bookingForm = document.getElementById('booking-form');
-  if (!bookingForm) return;
+  const searchResultsSection = document.querySelector('.search-results-section');
+  const bookingDetailsSection = document.querySelector('.booking-details-section');
+  const bookingConfirmationSection = document.querySelector('.booking-confirmation-section');
+  const trainList = document.getElementById('train-list');
+  const modifySearchBtn = document.getElementById('modify-search');
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const returnDateGroup = document.querySelector('.return-date-group');
+  const returnDateInput = document.getElementById('return-date');
+  const passengerFieldsContainer = document.getElementById('passenger-fields-container');
+  const passengerCountSelect = document.getElementById('passengers');
   
-  // Handle form submission
-  bookingForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    try {
+  // Sample train data
+  const sampleTrains = [
+      {
+          number: '12302',
+          name: 'Rajdhani Express',
+          from: 'Delhi (DEL)',
+          to: 'Mumbai (CSTM)',
+          departure: '16:35',
+          arrival: '08:15',
+          duration: '15h 40m',
+          classes: [
+              { name: 'AC 2 Tier (2A)', price: '₹2,920', availability: 'Available' },
+              { name: 'AC 3 Tier (3A)', price: '₹2,015', availability: 'Available' },
+              { name: 'Sleeper (SL)', price: '₹1,210', availability: 'RAC 4' }
+          ]
+      },
+      {
+          number: '12952',
+          name: 'Mumbai Rajdhani',
+          from: 'Delhi (DEL)',
+          to: 'Mumbai (CSTM)',
+          departure: '16:55',
+          arrival: '08:45',
+          duration: '15h 50m',
+          classes: [
+              { name: 'AC First Class (1A)', price: '₹4,955', availability: 'Available' },
+              { name: 'AC 2 Tier (2A)', price: '₹2,920', availability: 'Available' },
+              { name: 'AC 3 Tier (3A)', price: '₹2,015', availability: 'Waitlist 12' }
+          ]
+      },
+      {
+          number: '12954',
+          name: 'Shatabdi Express',
+          from: 'Delhi (DEL)',
+          to: 'Mumbai (CSTM)',
+          departure: '06:15',
+          arrival: '14:25',
+          duration: '8h 10m',
+          classes: [
+              { name: 'Executive Class (EC)', price: '₹3,465', availability: 'Available' },
+              { name: 'Chair Car (CC)', price: '₹1,860', availability: 'Available' }
+          ]
+      },
+      {
+          number: '12310',
+          name: 'Duronto Express',
+          from: 'Delhi (DEL)',
+          to: 'Mumbai (CSTM)',
+          departure: '22:40',
+          arrival: '11:30',
+          duration: '12h 50m',
+          classes: [
+              { name: 'AC 2 Tier (2A)', price: '₹2,920', availability: 'Available' },
+              { name: 'AC 3 Tier (3A)', price: '₹2,015', availability: 'Available' },
+              { name: 'Sleeper (SL)', price: '₹1,210', availability: 'Available' }
+          ]
+      }
+  ];
+  
+  // Mobile menu toggle
+  const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+  const nav = document.querySelector('nav');
+  
+  mobileMenuBtn.addEventListener('click', function() {
+      nav.classList.toggle('active');
+  });
+  
+  // Tab functionality
+  tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          if (this.dataset.tab === 'round-trip') {
+              returnDateGroup.classList.add('active');
+              returnDateInput.disabled = false;
+          } else {
+              returnDateGroup.classList.remove('active');
+              returnDateInput.disabled = true;
+          }
+      });
+  });
+  
+  // Generate passenger fields based on selection
+  passengerCountSelect.addEventListener('change', function() {
+      generatePassengerFields(parseInt(this.value));
+  });
+  
+  function generatePassengerFields(count) {
+      passengerFieldsContainer.innerHTML = '';
+      
+      for (let i = 1; i <= count; i++) {
+          const passengerField = document.createElement('div');
+          passengerField.className = 'passenger-field';
+          passengerField.innerHTML = `
+              <input type="text" placeholder="Passenger ${i} Name" required>
+              <select required>
+                  <option value="">Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+              </select>
+              <input type="number" placeholder="Age" min="1" max="120" required>
+          `;
+          passengerFieldsContainer.appendChild(passengerField);
+      }
+  }
+  
+  // Booking form submission
+  bookingForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Get form values
       const fromStation = document.getElementById('from-station').value;
       const toStation = document.getElementById('to-station').value;
       const departureDate = document.getElementById('departure-date').value;
+      const passengers = document.getElementById('passengers').value;
+      const travelClass = document.getElementById('class').value;
       
-      // Fetch trains based on search criteria
-      const trains = await fetchAPI(
-        `/trains?source=${fromStation}&destination=${toStation}&date=${departureDate}`,
-        'GET',
-        null,
-        token
-      );
+      // In a real app, you would fetch trains from an API based on these values
+      // For this demo, we'll use our sample data
       
-      displayTrainResults(trains);
+      // Display search results
+      displayTrainResults(sampleTrains);
       bookingForm.parentElement.parentElement.classList.add('hidden');
-      document.querySelector('.search-results-section').classList.remove('hidden');
-    } catch (error) {
-      alert(error.message);
-    }
+      searchResultsSection.classList.remove('hidden');
+      
+      // Scroll to results
+      searchResultsSection.scrollIntoView({ behavior: 'smooth' });
   });
   
   // Display train results
   function displayTrainResults(trains) {
-    const trainList = document.getElementById('train-list');
-    trainList.innerHTML = '';
-    
-    if (trains.length === 0) {
-      trainList.innerHTML = '<p class="no-results">No trains found for your search criteria</p>';
-      return;
-    }
-    
-    trains.forEach(train => {
-      const trainCard = document.createElement('div');
-      trainCard.className = 'train-card';
-      trainCard.dataset.trainId = train.id;
+      trainList.innerHTML = '';
       
-      let classesHtml = '';
-      train.classes.forEach(cls => {
-        classesHtml += `
-          <div class="class-option" data-class-id="${cls.id}" data-price="${cls.price}">
-            <div class="class-name">${cls.name}</div>
-            <div class="class-price">₹${cls.price.toFixed(2)}</div>
-            <div class="class-availability">${cls.seats} seats</div>
-          </div>
-        `;
+      trains.forEach(train => {
+          const trainCard = document.createElement('div');
+          trainCard.className = 'train-card';
+          
+          let classesHtml = '';
+          train.classes.forEach(cls => {
+              classesHtml += `
+                  <div class="class-option">
+                      <div class="class-name">${cls.name}</div>
+                      <div class="class-price">${cls.price}</div>
+                      <div class="class-availability">${cls.availability}</div>
+                  </div>
+              `;
+          });
+          
+          trainCard.innerHTML = `
+              <div class="train-header">
+                  <div class="train-name">${train.name}</div>
+                  <div class="train-number">${train.number}</div>
+              </div>
+              <div class="train-details">
+                  <div class="departure-arrival">
+                      <div class="time">${train.departure}</div>
+                      <div class="station">${train.from}</div>
+                  </div>
+                  <div class="duration">
+                      <i class="fas fa-clock"></i>
+                      <div>${train.duration}</div>
+                  </div>
+                  <div class="departure-arrival">
+                      <div class="time">${train.arrival}</div>
+                      <div class="station">${train.to}</div>
+                  </div>
+              </div>
+              <div class="train-classes">
+                  ${classesHtml}
+              </div>
+              <div class="train-actions">
+                  <button class="btn btn-primary book-train-btn" data-train='${JSON.stringify(train)}'>Book Now</button>
+              </div>
+          `;
+          
+          trainList.appendChild(trainCard);
       });
       
-      trainCard.innerHTML = `
-        <div class="train-header">
-          <div class="train-name">${train.name}</div>
-          <div class="train-number">${train.number}</div>
-        </div>
-        <div class="train-details">
-          <div class="departure-arrival">
-            <div class="time">${train.departure_time}</div>
-            <div class="station">${train.source}</div>
-          </div>
-          <div class="duration">
-            <i class="fas fa-clock"></i>
-            <div>${train.duration}</div>
-          </div>
-          <div class="departure-arrival">
-            <div class="time">${train.arrival_time}</div>
-            <div class="station">${train.destination}</div>
-          </div>
-        </div>
-        <div class="train-classes">
-          ${classesHtml}
-        </div>
-        <div class="train-actions">
-          <button class="btn btn-primary book-train-btn">Book Now</button>
-        </div>
-      `;
+      // Add event listeners to class options
+      document.querySelectorAll('.class-option').forEach(option => {
+          option.addEventListener('click', function() {
+              document.querySelectorAll('.class-option').forEach(opt => opt.classList.remove('selected'));
+              this.classList.add('selected');
+          });
+      });
       
-      trainList.appendChild(trainCard);
-    });
-    
-    // Add event listeners to class options
-    document.querySelectorAll('.class-option').forEach(option => {
-      option.addEventListener('click', function() {
-        document.querySelectorAll('.class-option').forEach(opt => opt.classList.remove('selected'));
-        this.classList.add('selected');
+      // Add event listeners to book buttons
+      document.querySelectorAll('.book-train-btn').forEach(button => {
+          button.addEventListener('click', function() {
+              const trainData = JSON.parse(this.dataset.train);
+              const selectedClass = this.closest('.train-card').querySelector('.class-option.selected');
+              
+              if (!selectedClass) {
+                  alert('Please select a class');
+                  return;
+              }
+              
+              showBookingDetails(trainData, selectedClass);
+          });
       });
-    });
-    
-    // Add event listeners to book buttons
-    document.querySelectorAll('.book-train-btn').forEach(button => {
-      button.addEventListener('click', function() {
-        const trainCard = this.closest('.train-card');
-        const trainId = trainCard.dataset.trainId;
-        const selectedClass = trainCard.querySelector('.class-option.selected');
-        
-        if (!selectedClass) {
-          alert('Please select a class');
-          return;
-        }
-        
-        const classId = selectedClass.dataset.classId;
-        const price = parseFloat(selectedClass.dataset.price);
-        
-        showBookingDetails(trainId, classId, price);
-      });
-    });
   }
   
   // Show booking details
-  async function showBookingDetails(trainId, classId, price) {
-    try {
-      // Fetch train details
-      const train = await fetchAPI(`/trains/${trainId}`, 'GET', null, token);
-      const selectedClass = train.classes.find(c => c.id == classId);
+  function showBookingDetails(train, classOption) {
+      const className = classOption.querySelector('.class-name').textContent;
+      const price = classOption.querySelector('.class-price').textContent;
       
       // Update selected train summary
       const selectedTrainSummary = document.getElementById('selected-train-summary');
       selectedTrainSummary.innerHTML = `
-        <div class="train-header">
-          <div class="train-name">${train.name}</div>
-          <div class="train-number">${train.number}</div>
-        </div>
-        <div class="train-details">
-          <div class="departure-arrival">
-            <div class="time">${train.departure_time}</div>
-            <div class="station">${train.source}</div>
+          <div class="train-header">
+              <div class="train-name">${train.name}</div>
+              <div class="train-number">${train.number}</div>
           </div>
-          <div class="duration">
-            <i class="fas fa-clock"></i>
-            <div>${train.duration}</div>
+          <div class="train-details">
+              <div class="departure-arrival">
+                  <div class="time">${train.departure}</div>
+                  <div class="station">${train.from}</div>
+              </div>
+              <div class="duration">
+                  <i class="fas fa-clock"></i>
+                  <div>${train.duration}</div>
+              </div>
+              <div class="departure-arrival">
+                  <div class="time">${train.arrival}</div>
+                  <div class="station">${train.to}</div>
+              </div>
           </div>
-          <div class="departure-arrival">
-            <div class="time">${train.arrival_time}</div>
-            <div class="station">${train.destination}</div>
+          <div class="train-class">
+              <strong>Class:</strong> ${className}
           </div>
-        </div>
-        <div class="train-class">
-          <strong>Class:</strong> ${selectedClass.name}
-        </div>
-        <div class="train-price">
-          <strong>Price:</strong> ₹${price.toFixed(2)} per passenger
-        </div>
+          <div class="train-price">
+              <strong>Price:</strong> ${price} per passenger
+          </div>
       `;
       
       // Generate passenger fields
-      const passengerCount = parseInt(document.getElementById('passengers').value);
-      generatePassengerFields(passengerCount);
+      generatePassengerFields(parseInt(passengerCountSelect.value));
       
       // Show booking details section
-      document.querySelector('.search-results-section').classList.add('hidden');
-      document.querySelector('.booking-details-section').classList.remove('hidden');
+      searchResultsSection.classList.add('hidden');
+      bookingDetailsSection.classList.remove('hidden');
+      
+      // Scroll to booking details
+      bookingDetailsSection.scrollIntoView({ behavior: 'smooth' });
       
       // Handle booking form submission
       const passengerDetailsForm = document.getElementById('passenger-details-form');
-      passengerDetailsForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        try {
-          const journeyDate = document.getElementById('departure-date').value;
-          const mobileNumber = document.getElementById('mobile-number').value;
-          const email = document.getElementById('email').value;
+      passengerDetailsForm.addEventListener('submit', function(e) {
+          e.preventDefault();
           
-          // Collect passenger details
-          const passengerDetails = [];
-          document.querySelectorAll('#passenger-fields-container .passenger-field').forEach(field => {
-            passengerDetails.push({
-              name: field.querySelector('input[type="text"]').value,
-              age: field.querySelector('input[type="number"]').value,
-              gender: field.querySelector('select').value
-            });
-          });
+          // In a real app, you would send this data to the server
+          // For this demo, we'll just show the confirmation
           
-          // Calculate total amount
-          const totalAmount = price * passengerCount;
-          
-          // Create booking
-          const booking = await fetchAPI(
-            '/bookings',
-            'POST',
-            {
-              train_id: trainId,
-              class_id: classId,
-              journey_date: journeyDate,
-              passengers: passengerCount,
-              passenger_details: passengerDetails,
-              total_amount: totalAmount
-            },
-            token
-          );
-          
-          // Show confirmation
-          document.getElementById('pnr-number').textContent = booking.pnr;
+          // Set confirmation details
+          document.getElementById('pnr-number').textContent = 'PNR' + Math.floor(10000000 + Math.random() * 90000000);
           document.getElementById('confirmed-train-number').textContent = train.number;
           document.getElementById('confirmed-train-name').textContent = train.name;
-          document.getElementById('confirmed-from').textContent = train.source;
-          document.getElementById('confirmed-to').textContent = train.destination;
+          document.getElementById('confirmed-from').textContent = train.from;
+          document.getElementById('confirmed-to').textContent = train.to;
           
-          const departureDate = new Date(journeyDate);
+          // Format departure date from the booking form
+          const departureDateInput = document.getElementById('departure-date');
+          const departureDate = new Date(departureDateInput.value);
           const formattedDepartureDate = departureDate.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric' 
           });
           
           document.getElementById('confirmed-departure').textContent = 
-            `${formattedDepartureDate}, ${train.departure_time}`;
-          document.getElementById('confirmed-arrival').textContent = train.arrival_time;
-          document.getElementById('confirmed-class').textContent = selectedClass.name;
-          document.getElementById('confirmed-passengers').textContent = passengerCount;
-          document.getElementById('confirmed-fare').textContent = 
-            `₹ ${totalAmount.toFixed(2)}`;
+              `${formattedDepartureDate}, ${train.departure}`;
+          document.getElementById('confirmed-arrival').textContent = train.arrival;
+          document.getElementById('confirmed-class').textContent = className;
+          document.getElementById('confirmed-passengers').textContent = passengerCountSelect.value;
           
-          document.querySelector('.booking-details-section').classList.add('hidden');
-          document.querySelector('.booking-confirmation-section').classList.remove('hidden');
-        } catch (error) {
-          alert(error.message);
-        }
+          // Calculate total fare
+          const pricePerPassenger = parseInt(price.replace(/[^0-9]/g, ''));
+          const totalFare = pricePerPassenger * parseInt(passengerCountSelect.value);
+          document.getElementById('confirmed-fare').textContent = 
+              `₹ ${totalFare.toLocaleString('en-IN')}`;
+          
+          // Show confirmation
+          bookingDetailsSection.classList.add('hidden');
+          bookingConfirmationSection.classList.remove('hidden');
+          
+          // Scroll to confirmation
+          bookingConfirmationSection.scrollIntoView({ behavior: 'smooth' });
       });
-    } catch (error) {
-      alert(error.message);
-    }
   }
   
-  // Generate passenger fields
-  function generatePassengerFields(count) {
-    const container = document.getElementById('passenger-fields-container');
-    container.innerHTML = '';
-    
-    for (let i = 1; i <= count; i++) {
-      const field = document.createElement('div');
-      field.className = 'passenger-field';
-      field.innerHTML = `
-        <input type="text" placeholder="Passenger ${i} Name" required>
-        <select required>
-          <option value="">Gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-        <input type="number" placeholder="Age" min="1" max="120" required>
-      `;
-      container.appendChild(field);
-    }
-  }
-  
-  // Passenger count change handler
-  const passengerCountSelect = document.getElementById('passengers');
-  if (passengerCountSelect) {
-    passengerCountSelect.addEventListener('change', function() {
-      generatePassengerFields(parseInt(this.value));
-    });
-  }
-}
-
-// Initialize My Bookings Page
-async function initMyBookingsPage(token) {
-  try {
-    const bookings = await fetchAPI('/bookings', 'GET', null, token);
-    displayBookings(bookings);
-  } catch (error) {
-    console.error('Error fetching bookings:', error);
-    displayBookings([]);
-  }
-  
-  function displayBookings(bookings) {
-    const bookingsList = document.getElementById('bookings-list');
-    const noBookings = document.getElementById('no-bookings');
-    
-    bookingsList.innerHTML = '';
-    
-    if (bookings.length === 0) {
-      noBookings.classList.remove('hidden');
-      return;
-    }
-    
-    noBookings.classList.add('hidden');
-    
-    bookings.forEach(booking => {
-      const bookingCard = document.createElement('div');
-      bookingCard.className = 'booking-card';
-      
-      let statusClass = '';
-      let statusText = '';
-      
-      switch(booking.status) {
-        case 'confirmed':
-          statusClass = 'status-upcoming';
-          statusText = 'Confirmed';
-          break;
-        case 'cancelled':
-          statusClass = 'status-cancelled';
-          statusText = 'Cancelled';
-          break;
-        case 'completed':
-          statusClass = 'status-completed';
-          statusText = 'Completed';
-          break;
-      }
-      
-      bookingCard.innerHTML = `
-        <div class="booking-header">
-          <div>
-            <div class="booking-train">${booking.train_name} (${booking.train_number})</div>
-            <div class="booking-pnr">PNR: ${booking.pnr}</div>
-          </div>
-          <div class="booking-status ${statusClass}">${statusText}</div>
-        </div>
-        <div class="booking-details">
-          <div class="booking-detail-item">
-            <span>From</span>
-            <strong>${booking.source}</strong>
-          </div>
-          <div class="booking-detail-item">
-            <span>To</span>
-            <strong>${booking.destination}</strong>
-          </div>
-          <div class="booking-detail-item">
-            <span>Departure</span>
-            <strong>${booking.journey_date}, ${booking.departure_time}</strong>
-          </div>
-          <div class="booking-detail-item">
-            <span>Arrival</span>
-            <strong>${booking.arrival_time}</strong>
-          </div>
-          <div class="booking-detail-item">
-            <span>Class</span>
-            <strong>${booking.class_name}</strong>
-          </div>
-          <div class="booking-detail-item">
-            <span>Passengers</span>
-            <strong>${booking.passengers}</strong>
-          </div>
-          <div class="booking-detail-item">
-            <span>Fare</span>
-            <strong>₹${parseFloat(booking.total_amount).toFixed(2)}</strong>
-          </div>
-        </div>
-        <div class="booking-actions">
-          ${booking.status === 'confirmed' ? `
-            <button class="btn btn-outline cancel-booking" data-pnr="${booking.pnr}">
-              <i class="fas fa-times"></i> Cancel
-            </button>
-          ` : ''}
-          <button class="btn btn-outline download-ticket" data-pnr="${booking.pnr}">
-            <i class="fas fa-download"></i> Download
-          </button>
-        </div>
-      `;
-      
-      bookingsList.appendChild(bookingCard);
-    });
-    
-    // Add event listeners to action buttons
-    document.querySelectorAll('.cancel-booking').forEach(button => {
-      button.addEventListener('click', function() {
-        const pnr = this.dataset.pnr;
-        if (confirm(`Are you sure you want to cancel booking ${pnr}?`)) {
-          // In a real app, you would call an API to cancel the booking
-          alert(`Booking ${pnr} has been cancelled`);
-          initMyBookingsPage(token); // Refresh the list
-        }
-      });
-    });
-    
-    document.querySelectorAll('.download-ticket').forEach(button => {
-      button.addEventListener('click', function() {
-        const pnr = this.dataset.pnr;
-        alert(`Downloading ticket for PNR ${pnr}`);
-      });
-    });
-  }
-}
-
-// Initialize Live Status Page
-function initLiveStatusPage() {
-  const statusForm = document.getElementById('status-form');
-  if (!statusForm) return;
-  
-  statusForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const trainNumber = document.getElementById('train-number').value;
-    const journeyDate = document.getElementById('journey-date').value;
-    
-    // In a real app, you would fetch this data from an API
-    alert(`Checking live status for train ${trainNumber} on ${journeyDate}`);
-    
-    // For demo purposes, we'll just show the results section
-    document.getElementById('status-results').classList.remove('hidden');
+  // Modify search button
+  modifySearchBtn.addEventListener('click', function() {
+      searchResultsSection.classList.add('hidden');
+      bookingForm.parentElement.parentElement.classList.remove('hidden');
   });
-}
+  
+  // Print ticket button
+  document.getElementById('print-ticket').addEventListener('click', function() {
+      window.print();
+  });
+  
+  // Download ticket button
+  document.getElementById('download-ticket').addEventListener('click', function() {
+      alert('In a real app, this would download your ticket as a PDF');
+  });
+  
+  // Initialize passenger fields
+  generatePassengerFields(1);
+  
+  // Set minimum date for departure date picker to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('departure-date').min = today;
+  document.getElementById('return-date').min = today;
+});

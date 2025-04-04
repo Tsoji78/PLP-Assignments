@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 3001;
-const SECRET_KEY = '781227zzxyz';
+const SECRET_KEY = '4a5f6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f';
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -32,6 +32,28 @@ function initializeDatabase() {
       password TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+      // Insert default admin user if not exists
+      db.get("SELECT COUNT(*) as count FROM users WHERE email = 'admin@example.com'", (err, row) => {
+        if (err) {
+          console.error('Error checking admin user:', err);
+          return;
+        }
+        if (row.count === 0) {
+          const hashedPassword = bcrypt.hashSync('password123', 10);
+          db.run(
+            'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
+            ['Admin User', 'admin@example.com', hashedPassword],
+            (err) => {
+              if (err) {
+                console.error('Error creating admin user:', err);
+              } else {
+                console.log('Default admin user created');
+              }
+            }
+          );
+        }
+      });
 
     db.run(`CREATE TABLE IF NOT EXISTS trains (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,10 +108,16 @@ function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
   
-  if (!token) return res.sendStatus(401);
+  if (!token) {
+    console.log('No token provided');
+    return res.sendStatus(401);
+  }
 
   jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.sendStatus(403);
+    if (err) {
+      console.log('Token verification failed:', err);
+      return res.sendStatus(403);
+    }
     req.user = user;
     next();
   });
@@ -258,7 +286,9 @@ app.get('/api/bookings', authenticateToken, (req, res) => {
   });
 });
 
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Default admin credentials: admin@example.com / password123`);
 });
