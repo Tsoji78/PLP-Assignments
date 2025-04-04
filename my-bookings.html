@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RailEase - My Bookings</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-train"></i>
+                <h1>RailEase</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Book Tickets</a></li>
+                    <li><a href="my-bookings.html" class="active">My Bookings</a></li>
+                    <li><a href="live-status.html">Live Status</a></li>
+                    <li><a href="pnr-enquiry.html">PNR Enquiry</a></li>
+                </ul>
+                <div class="user-actions" id="user-actions">
+                    <!-- Dynamically filled by JavaScript -->
+                </div>
+            </nav>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="bookings-section">
+            <div class="section-header">
+                <h2>My Bookings</h2>
+                <div class="filter-options">
+                    <select id="booking-filter">
+                        <option value="all">All Bookings</option>
+                        <option value="upcoming">Upcoming Journeys</option>
+                        <option value="completed">Completed Journeys</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="bookings-list" id="bookings-list">
+                <!-- Bookings will be inserted here by JavaScript -->
+            </div>
+            
+            <div class="no-bookings hidden" id="no-bookings">
+                <i class="fas fa-ticket-alt"></i>
+                <h3>No bookings found</h3>
+                <p>You haven't made any bookings yet</p>
+                <a href="index.html" class="btn btn-primary">Book Tickets</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <!-- Same footer as index.html -->
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="my-bookings.js"></script>
+</body>
+</html>
